@@ -1,0 +1,42 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mcp-sql-guard"
+version = "0.1.0"
+description = "A governed, read-only text-to-SQL MCP server: sqlglot AST validation, column-level PII masking, LIMIT and row caps, and a tamper-evident audit log."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Taha Siddiqui", email = "work.tahasiddiqui@gmail.com" }]
+keywords = ["mcp", "model-context-protocol", "sql", "governance", "text-to-sql", "duckdb", "security", "llm"]
+dependencies = [
+  "sqlglot>=25",
+  "duckdb>=1.1",
+  "pydantic>=2.6",
+  "pyyaml>=6.0",
+  "rich>=13.7",
+]
+
+[project.optional-dependencies]
+mcp = ["mcp>=1.9"]
+dev = ["pytest>=8.0", "ruff>=0.6", "mcp>=1.9"]
+
+[project.scripts]
+sqlguard = "mcp_sql_guard.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mcp_sql_guard"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "C4"]
+ignore = ["E501", "B008", "UP042"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

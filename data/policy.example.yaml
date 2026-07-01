@@ -1,0 +1,17 @@
+# Example governance policy. Load with: sqlguard serve --policy data/policy.example.yaml
+# A reviewer can read this and know exactly what is queryable, by whom, and within
+# what limits.
+
+allowed_tables: [customers, orders, products]
+
+# PII columns are masked in results unless the caller's role has `read_pii`.
+pii_columns:
+  - customers.email
+  - customers.phone
+
+role_capabilities:
+  analyst: []
+  privacy_officer: [read_pii]
+
+max_limit: 100   # injected when a query has no LIMIT
+max_rows: 1000   # hard cap; a larger LIMIT is reduced to this

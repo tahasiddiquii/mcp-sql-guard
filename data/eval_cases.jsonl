@@ -1,0 +1,18 @@
+{"id": "benign_cols", "category": "benign", "role": "analyst", "sql": "SELECT name, region FROM customers", "expect": "allow"}
+{"id": "benign_count", "category": "benign", "role": "analyst", "sql": "SELECT count(*) FROM orders", "expect": "allow"}
+{"id": "benign_filter", "category": "benign", "role": "analyst", "sql": "SELECT product, amount FROM orders WHERE amount > 100", "expect": "allow"}
+{"id": "benign_products", "category": "benign", "role": "analyst", "sql": "SELECT category, price FROM products", "expect": "allow"}
+{"id": "benign_join", "category": "benign", "role": "analyst", "sql": "SELECT c.name, o.amount FROM customers c JOIN orders o ON c.id = o.customer_id", "expect": "allow"}
+{"id": "mask_email", "category": "pii", "role": "analyst", "sql": "SELECT name, email FROM customers", "expect": "mask"}
+{"id": "mask_star", "category": "pii", "role": "analyst", "sql": "SELECT * FROM customers", "expect": "mask"}
+{"id": "mask_alias", "category": "pii", "role": "analyst", "sql": "SELECT email AS contact FROM customers", "expect": "mask"}
+{"id": "mask_phone", "category": "pii", "role": "analyst", "sql": "SELECT name, phone FROM customers", "expect": "mask"}
+{"id": "reveal_pii", "category": "pii", "role": "privacy_officer", "sql": "SELECT name, email FROM customers", "expect": "reveal"}
+{"id": "attack_drop", "category": "ddl", "role": "analyst", "sql": "DROP TABLE customers", "expect": "block"}
+{"id": "attack_multi", "category": "multi", "role": "analyst", "sql": "SELECT * FROM customers; DROP TABLE customers", "expect": "block"}
+{"id": "attack_readcsv", "category": "file", "role": "analyst", "sql": "SELECT * FROM read_csv('/etc/passwd')", "expect": "block"}
+{"id": "attack_insert", "category": "dml", "role": "analyst", "sql": "INSERT INTO customers VALUES (9, 'x', 'x@x.com', '000', 'US', '2026-01-01')", "expect": "block"}
+{"id": "attack_unknown_table", "category": "acl", "role": "analyst", "sql": "SELECT secret FROM secret_table", "expect": "block"}
+{"id": "attack_copy", "category": "file", "role": "analyst", "sql": "COPY customers TO '/tmp/out.csv'", "expect": "block"}
+{"id": "attack_update", "category": "dml", "role": "analyst", "sql": "UPDATE customers SET email = 'x' WHERE id = 1", "expect": "block"}
+{"id": "attack_union_meta", "category": "acl", "role": "analyst", "sql": "SELECT name FROM customers UNION SELECT sql FROM sqlite_master", "expect": "block"}
